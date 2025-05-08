@@ -1,0 +1,7 @@
+
+<node id="OidcCswHarvester">
+  <clientId>my-client-id</clientId>
+  <clientSecret>my-client-secret</clientSecret>
+  <tokenUrl>https://idp.example.com/auth/realms/myrealm/protocol/openid-connect/token</tokenUrl>
+  <cswEndpoint>https://csw.service.com/</cswEndpoint>
+</node>

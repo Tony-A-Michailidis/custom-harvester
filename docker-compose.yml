@@ -1,0 +1,14 @@
+
+version: '3.8'
+services:
+  geonetwork-oidccsw:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./custom-harvester:/usr/local/geonetwork/web/src/main/java/org/fao/geonet/kernel/harvest/harvester/oidccsw
+      - ./config.xml:/usr/local/geonetwork/web/src/main/resources/config-harvesters/config.xml
+      - ./harvester-oidccsw.component.ts:/usr/local/geonetwork/web-ui/src/app/shared/harvesters/oidccsw/harvester-oidccsw.component.ts
+      - ./harvester-oidccsw.component.html:/usr/local/geonetwork/web-ui/src/app/shared/harvesters/oidccsw/harvester-oidccsw.component.html
+    environment:
+      - MAVEN_OPTS=-Xmx1024m
