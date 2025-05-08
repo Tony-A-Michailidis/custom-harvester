@@ -1,5 +1,5 @@
 #---- with maven 3.8.6 
-FROM openjdk:25-jdk-slim
+FROM openjdk:11-jdk-slim
 
 ENV MAVEN_VERSION=3.8.6 \
   MAVEN_HOME=/opt/maven
@@ -17,14 +17,13 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # now clone & build GeoNetwork
-RUN git clone https://github.com/geonetwork/core-geonetwork.git . 
-RUN cd ./core-geonetwork
-RUN mvn clean install -DskipTests  
-RUN cd ./web-ui 
+RUN cd core-geonetwork 
+RUN mvn clean install -DskipTests 
+RUN cd web-ui 
 RUN npm install 
-RUN npm run build
-RUN cd ../
-RUN cp -r ./web-ui/dist web/src/main/webapp
+RUN npm run build 
+RUN cd .. 
+RUN cp -r web-ui/dist ../web/src/main/webapp
 
 EXPOSE 8080
 
