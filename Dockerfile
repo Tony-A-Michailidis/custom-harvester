@@ -1,20 +1,31 @@
+#---- with maven 3.8.6 
+FROM openjdk:25-jdk-slim
 
-FROM openjdk:11-jdk-slim
+ENV MAVEN_VERSION=3.8.6 \
+  MAVEN_HOME=/opt/maven
 
-# Set working directory
 WORKDIR /usr/local/geonetwork
 
-# Install required packages
-RUN apt-get update && apt-get install -y maven git nodejs npm && rm -rf /var/lib/apt/lists/*
+# install git, node, npm and download Maven 3.8.6
+RUN apt-get update && \
+    apt-get install -y wget git nodejs npm && \
+    wget https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
+    tar -xzf apache-maven-${MAVEN_VERSION}-bin.tar.gz -C /opt && \
+    ln -s /opt/apache-maven-${MAVEN_VERSION} ${MAVEN_HOME} && \
+    update-alternatives --install /usr/bin/mvn mvn ${MAVEN_HOME}/bin/mvn 1 && \
+    rm apache-maven-${MAVEN_VERSION}-bin.tar.gz && \
+    rm -rf /var/lib/apt/lists/*
 
-# Clone and build GeoNetwork with the custom harvester
-RUN git clone https://github.com/geonetwork/core-geonetwork.git . && \
-    mvn clean install -DskipTests && \
-    cd web-ui && npm install && npm run build && \
-    cd .. && cp -r web-ui/dist web/src/main/webapp
+# now clone & build GeoNetwork
+RUN git clone https://github.com/geonetwork/core-geonetwork.git . 
+RUN cd ./core-geonetwork
+RUN mvn clean install -DskipTests  
+RUN cd ./web-ui 
+RUN npm install 
+RUN npm run build
+RUN cd ../
+RUN cp -r ./web-ui/dist web/src/main/webapp
 
-# Expose GeoNetwork port
 EXPOSE 8080
 
-# Start GeoNetwork
 CMD ["mvn", "-f", "web/pom.xml", "jetty:run"]
