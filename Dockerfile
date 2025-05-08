@@ -17,7 +17,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # now clone & build GeoNetwork
-RUN cd core-geonetwork 
+RUN cd ./core-geonetwork 
 RUN mvn clean install -DskipTests 
 RUN cd web-ui 
 RUN npm install 
